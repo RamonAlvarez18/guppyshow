@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guppy Show Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF3F5; --surface:#FFFFFF; --surface-2:#F4F9FA; --ink:#10262F; --muted:#56707A; --line:#C9DBE0;
+  --brand:#0B6B7D; --brand-ink:#FFFFFF; --brand-soft:#D6ECF0;
+  --accent:#B3266F; --accent-soft:#F8DDEB;
+  --gold:#C99700; --silver:#8794A0; --bronze:#B06A34;
+  --ok:#1E7F4F; --ok-soft:#DAF1E4; --warn:#9A5B00; --warn-soft:#FBEBCB; --danger:#B42318; --danger-soft:#FBDDD9;
+  --shadow:0 1px 2px rgba(16,38,47,.06), 0 4px 14px rgba(16,38,47,.05);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A171C; --surface:#12262E; --surface-2:#0F1F26; --ink:#E3EEF1; --muted:#8FA9B2; --line:#25404A;
+    --brand:#4DB8CB; --brand-ink:#052129; --brand-soft:#123943;
+    --accent:#F26BAB; --accent-soft:#3A1830;
+    --gold:#E3B72E; --silver:#A9B5BF; --bronze:#D08A54;
+    --ok:#52C688; --ok-soft:#12352A; --warn:#E8B04A; --warn-soft:#3A2C0F; --danger:#FF8A7D; --danger-soft:#3E1B18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A171C; --surface:#12262E; --surface-2:#0F1F26; --ink:#E3EEF1; --muted:#8FA9B2; --line:#25404A;
+  --brand:#4DB8CB; --brand-ink:#052129; --brand-soft:#123943;
+  --accent:#F26BAB; --accent-soft:#3A1830;
+  --gold:#E3B72E; --silver:#A9B5BF; --bronze:#D08A54;
+  --ok:#52C688; --ok-soft:#12352A; --warn:#E8B04A; --warn-soft:#3A2C0F; --danger:#FF8A7D; --danger-soft:#3E1B18;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.25);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0;letter-spacing:-.01em}
+h2{font-size:1.35rem;font-weight:800}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+.muted{color:var(--muted)}
+.sub{color:var(--muted);font-size:.85rem}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1rem}
+
+/* header */
+.top{background:var(--brand);color:var(--brand-ink);padding:1.1rem 0 0}
+:root[data-theme="dark"] .top{background:var(--surface)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .top{background:var(--surface)}}
+.top .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:flex-end;justify-content:space-between}
+.top h1{font-size:clamp(1.6rem,4.5vw,2.4rem);font-weight:800;color:inherit}
+:root[data-theme="dark"] .top h1{color:var(--ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .top h1{color:var(--ink)}}
+.top .meta{font-size:.95rem;opacity:.85;min-height:1.4em}
+.sync{appearance:none;border:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;font-size:.82rem;padding:.25rem .65rem;border-radius:99px;background:rgba(255,255,255,.16);white-space:nowrap}
+:root[data-theme="dark"] .sync{background:var(--surface-2);color:var(--muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sync{background:var(--surface-2);color:var(--muted)}}
+.dot{width:.55rem;height:.55rem;border-radius:50%;background:#7CE3A6}
+.dot.local{background:#F5C25B}.dot.err{background:#FF8A7D}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--brand);margin-top:.9rem}
+:root[data-theme="dark"] nav.tabs{background:var(--surface);border-bottom:1px solid var(--line)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs{background:var(--surface);border-bottom:1px solid var(--line)}}
+nav.tabs .wrap{display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{appearance:none;border:0;background:transparent;color:inherit;font:600 .95rem var(--body);padding:.8rem 1rem;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;color:var(--brand-ink);opacity:.8}
+:root[data-theme="dark"] nav.tabs button{color:var(--muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs button{color:var(--muted)}}
+nav.tabs button[aria-current="page"]{opacity:1;border-bottom-color:var(--accent-soft)}
+:root[data-theme="dark"] nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--brand)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--brand)}}
+nav.tabs .count{font-size:.75rem;background:rgba(255,255,255,.22);border-radius:99px;padding:.05rem .45rem;margin-left:.3rem}
+:root[data-theme="dark"] nav.tabs .count{background:var(--brand-soft)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) nav.tabs .count{background:var(--brand-soft)}}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+main{padding:1.25rem 0 3rem}
+.grid2{display:grid;gap:1rem;grid-template-columns:1fr}
+@media (min-width:860px){.grid2{grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.1rem;box-shadow:var(--shadow)}
+.card + .card{margin-top:1rem}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin-bottom:.9rem;flex-wrap:wrap}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.85rem}
+.field label,.lbl{font-size:.88rem;font-weight:600}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],input[type=search],select,textarea{
+  font:inherit;color:var(--ink);background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;padding:.6rem .7rem;width:100%;min-height:2.75rem}
+textarea{min-height:4.5rem;resize:vertical}
+input:disabled,select:disabled{opacity:.6}
+.two{display:grid;gap:.75rem;grid-template-columns:1fr}
+@media (min-width:560px){.two{grid-template-columns:1fr 1fr}}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-size:.95rem;margin-bottom:.7rem}
+.check input{width:1.2rem;height:1.2rem;margin-top:.15rem;accent-color:var(--brand);flex:none}
+.hint{font-size:.83rem;color:var(--muted)}
+
+.btn{appearance:none;border:1.5px solid transparent;border-radius:10px;font:600 .95rem var(--body);padding:.62rem 1rem;min-height:2.75rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;text-decoration:none}
+.btn.primary{background:var(--brand);color:var(--brand-ink)}
+.btn.accent{background:var(--accent);color:#fff}
+.btn.secondary{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--brand)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{min-height:2.1rem;padding:.3rem .65rem;font-size:.85rem;border-radius:8px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.secondary.sm.danger-text{color:var(--danger)}
+
+/* bench tag: the show's signature object */
+.tag{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:3.6rem;height:2.4rem;padding:0 .7rem 0 1.35rem;border:2px solid var(--brand);border-radius:8px;color:var(--brand);font:800 1.15rem var(--display);font-variant-numeric:tabular-nums;background:var(--surface);flex:none}
+.tag::before{content:"";position:absolute;left:.42rem;top:50%;width:.42rem;height:.42rem;margin-top:-.21rem;border-radius:50%;border:2px solid var(--brand);background:var(--bg)}
+.tag.big{height:3.3rem;min-width:5rem;font-size:1.6rem;padding-left:1.7rem}
+.tag.big::before{left:.6rem;width:.55rem;height:.55rem;margin-top:-.275rem}
+.tag.done{background:var(--brand);color:var(--brand-ink)}
+.tag.done::before{background:var(--brand);border-color:var(--brand-ink)}
+.tag.dq{border-color:var(--danger);color:var(--danger)}
+.tag.dq::before{border-color:var(--danger)}
+
+.chip{display:inline-flex;align-items:center;gap:.3rem;font:600 .78rem var(--body);padding:.15rem .6rem;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+button.chip{cursor:pointer;min-height:1.9rem}
+.chip.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.chip.bad{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.chip.info{background:var(--brand-soft);color:var(--brand);border-color:transparent}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.stat{background:var(--surface-2);border-radius:10px;padding:.7rem .85rem}
+.stat b{display:block;font:800 1.6rem var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:.82rem;color:var(--muted)}
+
+/* registration rows */
+.row-entry{display:grid;gap:.5rem;grid-template-columns:1fr;padding:.75rem;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;margin-bottom:.6rem}
+@media (min-width:600px){.row-entry{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:center}}
+.done-tags{display:flex;flex-wrap:wrap;gap:.6rem;margin:.9rem 0}
+.done-item{display:flex;align-items:center;gap:.6rem;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:.5rem .75rem}
+.recent{list-style:none;margin:0;padding:0}
+.recent li{display:flex;gap:.7rem;align-items:center;padding:.55rem 0;border-top:1px solid var(--line)}
+.recent li:first-child{border-top:0}
+.recent .who{min-width:0}
+.recent .who div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* tables */
+.tablewrap{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{padding:.6rem .75rem;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+th{font-size:.82rem;font-weight:600;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.dim td{opacity:.55}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.actions{white-space:nowrap;display:flex;gap:.3rem}
+.toolbar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.9rem;align-items:center}
+.toolbar .grow{flex:1 1 220px}
+.toolbar select{width:auto;min-width:11rem}
+.empty{padding:2rem 1rem;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font:600 1.05rem var(--display);margin-bottom:.25rem}
+
+/* judging */
+.judgebar{display:grid;gap:.75rem;grid-template-columns:1fr}
+@media (min-width:640px){.judgebar{grid-template-columns:1fr 1.4fr}}
+.entrygrid{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.entrybtn{appearance:none;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:.75rem;display:flex;gap:.75rem;align-items:center;cursor:pointer;min-height:4.2rem}
+.entrybtn:hover{border-color:var(--brand)}
+.entrybtn .txt{min-width:0;display:flex;flex-direction:column;gap:.15rem}
+.entrybtn .txt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.progress{height:.5rem;background:var(--line);border-radius:99px;overflow:hidden;margin-top:.4rem}
+.progress i{display:block;height:100%;background:var(--brand);border-radius:99px}
+
+/* scoring modal */
+.crit{display:grid;grid-template-columns:1fr auto;gap:.3rem .8rem;align-items:center;padding:.65rem 0;border-top:1px solid var(--line)}
+.crit:first-of-type{border-top:0}
+.crit label{font-weight:600}
+.crit .max{color:var(--muted);font-weight:400;font-size:.85rem}
+.crit input[type=range]{grid-column:1;width:100%;accent-color:var(--brand);min-height:2rem}
+.crit input[type=number]{grid-column:2;grid-row:1 / span 2;width:5rem;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.totalbar{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;background:var(--brand-soft);color:var(--brand);border-radius:10px;padding:.7rem 1rem;margin:.6rem 0 1rem}
+.totalbar strong{font:800 2rem var(--display);font-variant-numeric:tabular-nums}
+.dqbox{background:var(--danger-soft);border-radius:10px;padding:.7rem .85rem;margin-bottom:1rem}
+.dqbox .check{margin-bottom:.4rem;color:var(--danger);font-weight:600}
+.dqbox input[type=text]{background:var(--surface)}
+
+/* results */
+.classblock{margin-bottom:1.4rem}
+.classblock h3{margin-bottom:.5rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.rosette{position:relative;display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border-radius:50%;font:800 .95rem var(--display);color:#fff;background:var(--silver);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--silver)}
+.rosette.p1{background:var(--gold);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--gold)}
+.rosette.p2{background:var(--silver);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--silver)}
+.rosette.p3{background:var(--bronze);box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--bronze)}
+.rosette.pn{background:transparent;color:var(--muted);box-shadow:none;border:1.5px solid var(--line)}
+.bis{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:1.6rem}
+.bis .card{margin:0;display:flex;gap:.8rem;align-items:center}
+.bis .card.first{border-color:var(--gold);border-width:2px}
+.score{font:800 1.15rem var(--display);font-variant-numeric:tabular-nums}
+.blur{filter:blur(6px);user-select:none}
+
+/* setup */
+.listrow{display:grid;grid-template-columns:1fr auto;gap:.4rem;margin-bottom:.5rem;align-items:center}
+.listrow .btns{display:flex;gap:.25rem}
+.critrow{display:grid;grid-template-columns:1fr 5.5rem auto;gap:.4rem;margin-bottom:.5rem;align-items:center}
+.danger-zone{border-color:var(--danger)}
+
+/* modal + toast */
+.overlay{position:fixed;inset:0;background:rgba(6,20,26,.55);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 1rem) 1rem calc(env(safe-area-inset-bottom,0px) + 1rem);overflow-y:auto}
+.modal{background:var(--surface);color:var(--ink);border-radius:16px;width:100%;max-width:520px;padding:1.2rem;margin:auto 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.modal-head{display:flex;gap:.9rem;align-items:center;margin-bottom:.9rem}
+.modal .btnrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.modal pre{max-height:50vh;overflow:auto;background:var(--surface-2);padding:.7rem;border-radius:8px;font-size:.8rem;white-space:pre;border:1px solid var(--line)}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 1.2rem);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.65rem 1.1rem;border-radius:99px;font-weight:600;font-size:.92rem;z-index:80;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+.loading{padding:4rem 1rem;text-align:center;color:var(--muted)}
+.notice{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:.7rem .9rem;margin-bottom:1rem;font-size:.93rem}
+.notice.info{background:var(--brand-soft);color:var(--brand)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1 id="showName">Guppy show</h1>
+      <div class="meta" id="showMeta"></div>
+    </div>
+    <button class="sync" id="sync" data-action="account" aria-label="Account and connection details"><span class="dot local"></span><span>Connecting</span></button>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <div class="wrap" id="tabs"></div>
+  </nav>
+</header>
+
+<div class="wrap" id="banner"></div>
+<main class="wrap" id="view"><div class="loading">Opening the show desk…</div></main>
+
+<div id="modalRoot"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { initializeApp as fbInit, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc as fsDoc, collection as fsCollection, onSnapshot as fsOnSnapshot,
+         query as fsQuery, where as fsWhere,
+         setDoc, updateDoc, deleteDoc, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,
+         createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* =====================================================================
+   STEP 5 OF THE SETUP GUIDE: PASTE YOUR FIREBASE CONFIG BELOW.
+   Replace the whole block between the braces with the one Firebase gives you.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+ apiKey: "AIzaSyDYnMgw_56BNvSkZtT6m8ykmnB5BhMPKGc",
+  authDomain: "guppy-show.firebaseapp.com",
+  projectId: "guppy-show",
+  storageBucket: "guppy-show.firebasestorage.app",
+  messagingSenderId: "564863930093",
+  appId: "1:564863930093:web:c889e6ee5843906a6c06e4"
+};
+/* ===================================================================== */
+
+const FIREBASE_READY = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId &&
+  !/^PASTE/.test(FIREBASE_CONFIG.apiKey) && !/^PASTE/.test(FIREBASE_CONFIG.projectId));
+const authMode = FIREBASE_READY;
+const ROLE_LABEL = {admin:'Admin', registrar:'Registrar', judge:'Judge'};
+
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const num = (v, d=0) => { const n = parseFloat(v); return isFinite(n) ? n : d; };
+const fmt = n => String(Math.round(n * 100) / 100);
+const ls = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+
+/* ---------- defaults ---------- */
+const DEFAULT_CONFIG = () => ({
+  name: 'Guppy show',
+  date: '',
+  venue: '',
+  fee: 0,
+  currency: '₱',
+  open: true,
+  anonymous: true,
+  maxPerClass: 0,
+  judgesPerEntry: 1,
+  classes: [
+    {id:'delta',  name:'Delta tail males'},
+    {id:'fancy',  name:'Fancy tail males (fan, pin, lyre)'},
+    {id:'solid',  name:'Solid colour males'},
+    {id:'pattern',name:'Snakeskin and pattern males'},
+    {id:'females',name:'Females'},
+    {id:'junior', name:'Juniors (under 16)'},
+    {id:'pairs',  name:'Pairs (male and female)'},
+    {id:'trios',  name:'Trios'}
+  ],
+  criteria: [
+    {id:'body',      name:'Body and shape',        max:20},
+    {id:'dorsal',    name:'Dorsal fin',            max:15},
+    {id:'caudal',    name:'Caudal (tail) fin',     max:25},
+    {id:'colour',    name:'Colour and pattern',    max:20},
+    {id:'symmetry',  name:'Symmetry and finnage',  max:10},
+    {id:'condition', name:'Condition and deportment', max:10}
+  ]
+});
+const mergeCfg = c => {
+  const d = DEFAULT_CONFIG();
+  const m = Object.assign(d, c || {});
+  if (!Array.isArray(m.classes) || !m.classes.length) m.classes = d.classes;
+  if (!Array.isArray(m.criteria) || !m.criteria.length) m.criteria = d.criteria;
+  return m;
+};
+
+/* ---------- state ---------- */
+const S = {
+  config: DEFAULT_CONFIG(), entries: [], scores: [],
+  tab: 'register', ready: false, mode: 'local', sync: 'connecting',
+  judge: ls.get('gs:judge') || '', judgeClass: '', resultClass: '', reveal: false,
+  regDone: null, fatal: false, me: null, users: [], pub: [], priv: {}
+};
+let db = null;
+
+function makeDb(store){
+  const dref = p => fsDoc(store, ...p.split('/'));
+  const wrap = d => ({id: d.id, exists: d.exists(), data: () => d.data()});
+  const col = ref => ({
+    get: async () => { const q = await getDocs(ref); return {docs: q.docs.map(wrap)}; },
+    onSnapshot: (next, err) => fsOnSnapshot(ref, q => next({docs: q.docs.map(wrap)}), err),
+    where: (f, o, v) => col(fsQuery(ref, fsWhere(f, o, v)))
+  });
+  return {
+    doc: p => ({
+      set: d => setDoc(dref(p), d),
+      update: d => updateDoc(dref(p), d),
+      delete: () => deleteDoc(dref(p)),
+      onSnapshot: (next, err) => fsOnSnapshot(dref(p), s => next(wrap(s)), err)
+    }),
+    collection: p => col(fsCollection(store, p)),
+    allocate: (n, floor) => runTransaction(store, async tx => {
+      const ref = dref('meta/counter');
+      const snap = await tx.get(ref);
+      const cur = snap.exists() ? (snap.data().next || 1) : 1;
+      const start = Math.max(cur, floor);
+      tx.set(ref, {next: start + n});
+      return start;
+    })
+  };
+}
+
+/* ---------- storage: shared db when available, else this device ---------- */
+const local = {config:null, entries:{}, scores:{}, counter:0};
+function loadLocal(){ try { const j = JSON.parse(ls.get('gs:data') || 'null'); if (j) Object.assign(local, j); } catch(e){} }
+function saveLocal(){ ls.set('gs:data', JSON.stringify(local)); }
+function pullLocal(){ S.config = mergeCfg(local.config); S.entries = Object.values(local.entries); S.scores = Object.values(local.scores).map(x => Object.assign({}, x, {judgeUid: x.judgeUid || x.judgeId})); }
+
+const scoreKey = (entryId, uid) => entryId + '__' + uid;
+const judgeIdOf = name => (String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)) || 'judge';
+
+const PUB_FIELDS = ['no','class','strain','status','dq','dqReason','ts','sample'];
+const PRIV_FIELDS = ['exhibitor','club','contact','paid'];
+const pick = (o, keys) => { const r = {}; keys.forEach(k => { if (o[k] !== undefined) r[k] = o[k]; }); return r; };
+const myRole = () => S.me ? S.me.role : 'admin';
+const myUid = () => S.me ? S.me.uid : judgeIdOf(S.judge);
+const myName = () => S.me ? S.me.name : S.judge.trim();
+
+const API = {
+  async saveConfig(c){
+    if (db) await db.doc('config/show').set(c);
+    else { local.config = c; saveLocal(); pullLocal(); }
+  },
+  async putEntry(e){
+    if (db) { await db.doc('entries/' + e.id).set(pick(e, PUB_FIELDS)); await db.doc('private/' + e.id).set(pick(e, PRIV_FIELDS)); }
+    else { local.entries[e.id] = e; saveLocal(); pullLocal(); }
+  },
+  async patchEntry(id, p){
+    if (db) {
+      const a = pick(p, PUB_FIELDS), b = pick(p, PRIV_FIELDS);
+      if (Object.keys(a).length) await db.doc('entries/' + id).update(a);
+      if (Object.keys(b).length) await db.doc('private/' + id).update(b);
+    } else { Object.assign(local.entries[id] || {}, p); saveLocal(); pullLocal(); }
+  },
+  async delEntry(id){
+    const mine = S.scores.filter(s => s.entryId === id);
+    if (db) {
+      for (const s of mine) await db.doc('scores/' + scoreKey(id, s.judgeUid)).delete();
+      await db.doc('entries/' + id).delete();
+      await db.doc('private/' + id).delete();
+    } else {
+      mine.forEach(s => delete local.scores[scoreKey(id, s.judgeUid)]);
+      delete local.entries[id]; saveLocal(); pullLocal();
+    }
+  },
+  async putScore(s){
+    if (db) await db.doc('scores/' + scoreKey(s.entryId, s.judgeUid)).set(s);
+    else { local.scores[scoreKey(s.entryId, s.judgeUid)] = s; saveLocal(); pullLocal(); }
+  },
+  async delScore(entryId, uid){
+    if (db) await db.doc('scores/' + scoreKey(entryId, uid)).delete();
+    else { delete local.scores[scoreKey(entryId, uid)]; saveLocal(); pullLocal(); }
+  },
+  async putUser(uid, d){ await db.doc('users/' + uid).set(d); },
+  async patchUser(uid, p){ await db.doc('users/' + uid).update(p); },
+  async delUser(uid){ await db.doc('users/' + uid).delete(); },
+  async alloc(n){
+    const floor = S.entries.reduce((m, e) => Math.max(m, e.no || 0), 0) + 1;
+    if (!db) {
+      const start = Math.max(local.counter + 1, floor);
+      local.counter = start + n - 1; saveLocal(); return start;
+    }
+    return db.allocate(n, floor);
+  },
+  async resetAll(){
+    if (db) {
+      for (const col of ['entries','private','scores']) {
+        const snap = await db.collection(col).get();
+        for (const d of snap.docs) await db.doc(col + '/' + d.id).delete();
+      }
+      await db.doc('meta/counter').set({next: 1});
+    } else {
+      local.entries = {}; local.scores = {}; local.counter = 0; saveLocal(); pullLocal();
+    }
+  }
+};
+
+/* ---------- derived data ---------- */
+const cfg = () => S.config;
+const className = id => { const c = cfg().classes.find(c => c.id === id); return c ? c.name : 'Unknown class'; };
+const totalOf = s => cfg().criteria.reduce((a, c) => a + (num(s.points && s.points[c.id])), 0);
+const maxTotal = () => cfg().criteria.reduce((a, c) => a + c.max, 0);
+const activeEntries = () => S.entries.filter(e => e.status !== 'scratched');
+const byNo = (a, b) => (a.no || 0) - (b.no || 0);
+const money = n => (cfg().currency || '') + Number(n || 0).toLocaleString(undefined, {maximumFractionDigits: 2});
+const myScore = entryId => S.scores.find(s => s.entryId === entryId && s.judgeUid === myUid());
+
+function standings(classId){
+  const inClass = S.entries.filter(e => e.class === classId && e.status !== 'scratched');
+  const rows = inClass.filter(e => !e.dq).map(e => {
+    const sc = S.scores.filter(s => s.entryId === e.id);
+    const totals = sc.map(totalOf);
+    return {e, sc, n: totals.length, avg: totals.length ? totals.reduce((a,b) => a+b, 0) / totals.length : null};
+  });
+  const scored = rows.filter(r => r.n > 0).sort((a,b) => (b.avg - a.avg) || (a.e.no - b.e.no));
+  scored.forEach((r, i) => {
+    r.place = (i > 0 && Math.abs(r.avg - scored[i-1].avg) < 1e-9) ? scored[i-1].place : i + 1;
+  });
+  scored.forEach(r => { r.tie = scored.some(o => o !== r && o.place === r.place); });
+  return {scored, pending: rows.filter(r => r.n === 0), dq: inClass.filter(e => e.dq)};
+}
+const ordinal = n => { const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]); };
+
+/* ---------- ui helpers ---------- */
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function openModal(html, onMount){
+  const root = $('#modalRoot');
+  root.innerHTML = '<div class="overlay" data-action="overlay"><div class="modal" role="dialog" aria-modal="true">' + html + '</div></div>';
+  const first = $('.modal input:not([type=range]), .modal select, .modal textarea, .modal button', root);
+  if (first) setTimeout(() => first.focus(), 30);
+  if (onMount) onMount($('.modal', root));
+}
+function closeModal(){ $('#modalRoot').innerHTML = ''; }
+function confirmModal(o){
+  return new Promise(res => {
+    openModal('<h2>' + esc(o.title) + '</h2><p class="muted" style="margin-top:.5rem">' + o.body + '</p>' +
+      (o.type ? '<div class="field" style="margin-top:.9rem"><label for="cfmType">Type ' + esc(o.type) + ' to confirm</label><input type="text" id="cfmType" autocomplete="off"></div>' : '') +
+      '<div class="btnrow"><button class="btn ' + (o.danger ? 'danger' : 'primary') + '" id="cfmYes"' + (o.type ? ' disabled' : '') + '>' + esc(o.confirm || 'Confirm') + '</button><button class="btn secondary" id="cfmNo">Cancel</button></div>',
+      m => {
+        const yes = $('#cfmYes', m), inp = $('#cfmType', m);
+        if (inp) inp.addEventListener('input', () => { yes.disabled = inp.value.trim() !== o.type; });
+        yes.onclick = () => { closeModal(); res(true); };
+        $('#cfmNo', m).onclick = () => { closeModal(); res(false); };
+      });
+  });
+}
+const csvCell = c => { c = String(c == null ? '' : c); if (/^[=+\-@]/.test(c)) c = "'" + c; return /[",\n]/.test(c) ? '"' + c.replace(/"/g,'""') + '"' : c; };
+const toCsv = rows => rows.map(r => r.map(csvCell).join(',')).join('\n');
+async function exportFile(filename, text){
+  try {
+    const blob = new Blob(['\ufeff' + text], {type: 'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    toast('File downloaded'); return;
+  } catch(e){}
+  openModal('<h2>Copy this CSV</h2><p class="muted" style="margin:.4rem 0 .7rem">The download was blocked. Copy the text and paste it into a spreadsheet.</p><pre>' + esc(text) + '</pre><div class="btnrow"><button class="btn primary" data-action="close-modal">Done</button></div>');
+}
+
+/* ---------- header + nav ---------- */
+const TAB_LIST = [['register','Register'],['entries','Entries'],['judging','Judging'],['results','Results'],['users','Users'],['setup','Setup']];
+const ROLE_TABS = {admin:['register','entries','judging','results','users','setup'], registrar:['register','entries'], judge:['judging']};
+function allowedTabs(){ if (authMode && !S.me) return []; return ROLE_TABS[myRole()] || []; }
+function renderHeader(){
+  $('#showName').textContent = cfg().name || 'Guppy show';
+  const bits = [];
+  if (cfg().date) { try { bits.push(new Date(cfg().date + 'T00:00:00').toLocaleDateString(undefined, {weekday:'long', day:'numeric', month:'long', year:'numeric'})); } catch(e){ bits.push(cfg().date); } }
+  if (cfg().venue) bits.push(cfg().venue);
+  $('#showMeta').textContent = bits.join(', ');
+  document.title = (cfg().name || 'Guppy show') + ' desk';
+  const sy = $('#sync');
+  let dotCls, label;
+  if (S.sync === 'err') { dotCls = 'dot err'; label = 'Connection lost'; }
+  else if (S.me) { dotCls = 'dot'; label = (S.me.name || S.me.email) + ' (' + ROLE_LABEL[S.me.role] + ')'; }
+  else if (authMode) { dotCls = 'dot local'; label = 'Not signed in'; }
+  else { dotCls = 'dot local'; label = 'Saved on this device only'; }
+  sy.innerHTML = '<span class="' + dotCls + '"></span><span>' + esc(label) + '</span>';
+  const bn = $('#banner');
+  if (bn) bn.innerHTML = (!FIREBASE_READY) ? '<div class="notice" style="margin-top:1rem">Not connected to Firebase yet, so entries stay on this device and there are no user accounts. Follow the setup guide to add your Firebase config.</div>' : '';
+  const okTabs = allowedTabs();
+  $('#tabs').innerHTML = TAB_LIST.filter(([k]) => okTabs.includes(k)).map(([k, label]) =>
+    '<button data-action="tab" data-tab="' + k + '"' + (S.tab === k ? ' aria-current="page"' : '') + '>' + label +
+    (k === 'entries' ? '<span class="count">' + activeEntries().length + '</span>' : '') + '</button>').join('');
+}
+
+/* ---------- tabs ---------- */
+const TABS = {};
+const view = () => $('#view');
+
+/* == Register == */
+function classOptions(sel, withBlank){
+  return (withBlank ? '<option value="">Choose a class</option>' : '') +
+    cfg().classes.map(c => '<option value="' + esc(c.id) + '"' + (sel === c.id ? ' selected' : '') + '>' + esc(c.name) + '</option>').join('');
+}
+function rowHtml(){
+  return '<div class="row-entry"><select class="r-class" aria-label="Class">' + classOptions('', true) + '</select>' +
+    '<input type="text" class="r-strain" aria-label="Strain or variety" placeholder="Strain or variety, e.g. Red Mosaic">' +
+    '<button type="button" class="btn secondary sm" data-action="rm-row" aria-label="Remove this entry">Remove</button></div>';
+}
+TABS.register = {
+  mount(){
+    if (S.regDone) { this.mountDone(); return; }
+    const closed = !cfg().open;
+    view().innerHTML =
+    '<div class="grid2"><div>' +
+      '<section class="card"><div class="card-head"><h2>Register an exhibitor</h2></div>' +
+      (closed ? '<div class="notice">Registration is closed. Turn it back on in Setup to add entries.</div>' : '') +
+      '<div class="field"><label for="exName">Exhibitor name</label><input type="text" id="exName" list="exList" autocomplete="off"' + (closed?' disabled':'') + '><datalist id="exList"></datalist></div>' +
+      '<div class="two"><div class="field"><label for="exClub">Club or fish room <span class="muted">(optional)</span></label><input type="text" id="exClub"' + (closed?' disabled':'') + '></div>' +
+      '<div class="field"><label for="exContact">Phone or email <span class="muted">(optional)</span></label><input type="text" id="exContact"' + (closed?' disabled':'') + '></div></div>' +
+      '<div class="lbl" style="margin:.4rem 0 .5rem">Entries</div>' +
+      '<div id="rows">' + rowHtml() + '</div>' +
+      '<button type="button" class="btn secondary sm" data-action="add-row"' + (closed?' disabled':'') + '>Add another entry</button>' +
+      '<div style="margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line)">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.6rem"><span class="lbl">Entry fee</span><span class="score" id="feeTotal"></span></div>' +
+      '<label class="check"><input type="checkbox" id="exPaid"' + (closed?' disabled':'') + '><span>Fee paid at the desk</span></label>' +
+      '<button class="btn primary" id="regGo" data-action="register"' + (closed?' disabled':'') + '>Register entries</button></div>' +
+      '</section></div>' +
+      '<aside><section class="card"><h3 style="margin-bottom:.7rem">At the desk</h3><div class="stats" id="regStats"></div></section>' +
+      '<section class="card"><h3 style="margin-bottom:.5rem">Latest entries</h3><ul class="recent" id="recent"></ul></section></aside></div>';
+    this.updateFee();
+  },
+  mountDone(){
+    const d = S.regDone;
+    view().innerHTML = '<div class="grid2"><div><section class="card"><h2>' + esc(d.name) + ' is registered</h2>' +
+      '<p class="muted" style="margin-top:.35rem">Write each bench number on its tank label before the fish go on the bench.</p>' +
+      '<div class="done-tags">' + d.items.map(i => '<div class="done-item"><span class="tag big">' + i.no + '</span><div><b>' + esc(className(i.cls)) + '</b><div class="sub">' + esc(i.strain || 'No strain given') + '</div></div></div>').join('') + '</div>' +
+      '<p style="margin-bottom:1rem"><b>' + money(d.fee) + '</b> ' + (d.paid ? '<span class="chip ok">Paid</span>' : '<span class="chip warn">Unpaid</span>') + '</p>' +
+      '<button class="btn primary" data-action="reg-again">Register another exhibitor</button></section></div>' +
+      '<aside><section class="card"><h3 style="margin-bottom:.7rem">At the desk</h3><div class="stats" id="regStats"></div></section>' +
+      '<section class="card"><h3 style="margin-bottom:.5rem">Latest entries</h3><ul class="recent" id="recent"></ul></section></aside></div>';
+  },
+  updateFee(){
+    const n = $$('.row-entry').length, el = $('#feeTotal');
+    if (el) el.textContent = n + (n === 1 ? ' entry' : ' entries') + ' = ' + money(n * num(cfg().fee));
+  },
+  update(){
+    const dl = $('#exList');
+    if (dl) {
+      const names = Array.from(new Set(S.entries.map(e => e.exhibitor))).sort();
+      dl.innerHTML = names.map(n => '<option value="' + esc(n) + '">').join('');
+    }
+    const act = activeEntries();
+    const exh = new Set(act.map(e => (e.exhibitor || '').trim().toLowerCase()));
+    const due = act.filter(e => !e.paid).length * num(cfg().fee);
+    const paid = act.filter(e => e.paid).length * num(cfg().fee);
+    const st = $('#regStats');
+    if (st) st.innerHTML =
+      '<div class="stat"><b>' + act.length + '</b><span>Entries</span></div>' +
+      '<div class="stat"><b>' + exh.size + '</b><span>Exhibitors</span></div>' +
+      '<div class="stat"><b>' + money(paid) + '</b><span>Fees collected</span></div>' +
+      '<div class="stat"><b>' + money(due) + '</b><span>Fees outstanding</span></div>';
+    const rc = $('#recent');
+    if (rc) {
+      const latest = S.entries.slice().sort((a,b) => (b.ts||0) - (a.ts||0)).slice(0, 6);
+      rc.innerHTML = latest.length ? latest.map(e =>
+        '<li><span class="tag">' + e.no + '</span><div class="who"><div><b>' + esc(e.exhibitor) + '</b></div><div class="sub">' + esc(className(e.class)) + '</div></div></li>').join('')
+        : '<li class="muted">No entries yet. Registered fish will appear here.</li>';
+    }
+  }
+};
+
+async function doRegister(){
+  const name = $('#exName').value.trim();
+  if (!name) { toast('Enter the exhibitor name'); $('#exName').focus(); return; }
+  const rows = $$('.row-entry').map(r => ({cls: $('.r-class', r).value, strain: $('.r-strain', r).value.trim()}));
+  if (rows.some(r => !r.cls)) { toast('Choose a class for every entry'); return; }
+  const max = num(cfg().maxPerClass);
+  if (max > 0) {
+    const counts = {};
+    activeEntries().filter(e => (e.exhibitor||'').trim().toLowerCase() === name.toLowerCase()).forEach(e => counts[e.class] = (counts[e.class]||0) + 1);
+    rows.forEach(r => counts[r.cls] = (counts[r.cls]||0) + 1);
+    const over = Object.keys(counts).find(k => counts[k] > max);
+    if (over) { toast(name + ' can enter at most ' + max + ' in ' + className(over)); return; }
+  }
+  const btn = $('#regGo'); btn.disabled = true; btn.textContent = 'Registering…';
+  try {
+    const start = await API.alloc(rows.length);
+    const club = $('#exClub').value.trim(), contact = $('#exContact').value.trim(), paid = $('#exPaid').checked;
+    const items = [];
+    for (let i = 0; i < rows.length; i++) {
+      const e = {id: 'e' + uid(), no: start + i, exhibitor: name, club, contact, class: rows[i].cls, strain: rows[i].strain, paid, status: 'active', dq: false, dqReason: '', ts: Date.now() + i};
+      await API.putEntry(e);
+      items.push({no: e.no, cls: e.class, strain: e.strain});
+    }
+    S.regDone = {name, items, paid, fee: rows.length * num(cfg().fee)};
+    TABS.register.mount(); TABS.register.update();
+  } catch(err) {
+    toast(err && err.message ? err.message : 'Could not save. Try again.');
+    btn.disabled = false; btn.textContent = 'Register entries';
+  }
+}
+
+/* == Entries == */
+TABS.entries = {
+  mount(){
+    view().innerHTML =
+      '<div class="toolbar"><input type="search" id="eSearch" class="grow" placeholder="Search number, exhibitor or strain" aria-label="Search entries">' +
+      '<select id="eClass" aria-label="Filter by class"><option value="">All classes</option>' + classOptions('', false) + '</select>' +
+      '<select id="eFilter" aria-label="Filter by status"><option value="">All entries</option><option value="unpaid">Unpaid</option><option value="scratched">Scratched</option><option value="dq">Disqualified</option></select>' +
+      '<button class="btn secondary" data-action="export-entries">Export CSV</button></div>' +
+      '<div id="eSummary" class="sub" style="margin-bottom:.6rem"></div>' +
+      '<div class="tablewrap"><table><thead><tr><th>No.</th><th>Class</th><th>Strain</th><th>Exhibitor</th><th>Fee</th><th>Status</th><th></th></tr></thead><tbody id="eBody"></tbody></table></div>';
+  },
+  update(){
+    const body = $('#eBody'); if (!body) return;
+    const q = ($('#eSearch').value || '').trim().toLowerCase(), cl = $('#eClass').value, fl = $('#eFilter').value;
+    let list = S.entries.slice().sort(byNo);
+    if (cl) list = list.filter(e => e.class === cl);
+    if (fl === 'unpaid') list = list.filter(e => !e.paid && e.status !== 'scratched');
+    if (fl === 'scratched') list = list.filter(e => e.status === 'scratched');
+    if (fl === 'dq') list = list.filter(e => e.dq);
+    if (q) list = list.filter(e => (String(e.no) + ' ' + e.exhibitor + ' ' + e.strain + ' ' + e.club).toLowerCase().includes(q));
+    $('#eSummary').textContent = list.length + ' of ' + S.entries.length + ' entries shown';
+    body.innerHTML = list.length ? list.map(e => {
+      const st = e.status === 'scratched' ? '<span class="chip">Scratched</span>' : e.dq ? '<span class="chip bad" title="' + esc(e.dqReason) + '">Disqualified</span>' : '<span class="chip info">Entered</span>';
+      return '<tr class="' + (e.status === 'scratched' ? 'dim' : '') + '"><td><span class="tag">' + e.no + '</span></td>' +
+        '<td>' + esc(className(e.class)) + '</td><td>' + (esc(e.strain) || '<span class="muted">Not given</span>') + '</td>' +
+        '<td>' + esc(e.exhibitor) + (e.club ? '<div class="sub">' + esc(e.club) + '</div>' : '') + '</td>' +
+        '<td><button class="chip ' + (e.paid ? 'ok' : 'warn') + '" data-action="toggle-paid" data-id="' + e.id + '" aria-label="Toggle paid for entry ' + e.no + '">' + (e.paid ? 'Paid' : 'Unpaid') + '</button></td>' +
+        '<td>' + st + '</td>' +
+        '<td><div class="actions"><button class="btn secondary sm" data-action="edit-entry" data-id="' + e.id + '">Edit</button>' +
+        '<button class="btn secondary sm" data-action="scratch" data-id="' + e.id + '">' + (e.status === 'scratched' ? 'Restore' : 'Scratch') + '</button>' +
+        '<button class="btn secondary sm danger-text" data-action="del-entry" data-id="' + e.id + '">Delete</button></div></td></tr>';
+    }).join('') : '<tr><td colspan="7"><div class="empty"><b>No entries to show</b>' + (S.entries.length ? 'Try a different search or filter.' : 'Register the first exhibitor on the Register tab.') + '</div></td></tr>';
+  }
+};
+function editEntry(id){
+  const e = S.entries.find(x => x.id === id); if (!e) return;
+  openModal('<h2>Edit entry ' + e.no + '</h2><div style="margin-top:.9rem">' +
+    '<div class="field"><label for="m_ex">Exhibitor</label><input type="text" id="m_ex" value="' + esc(e.exhibitor) + '"></div>' +
+    '<div class="two"><div class="field"><label for="m_club">Club</label><input type="text" id="m_club" value="' + esc(e.club) + '"></div>' +
+    '<div class="field"><label for="m_ct">Phone or email</label><input type="text" id="m_ct" value="' + esc(e.contact) + '"></div></div>' +
+    '<div class="field"><label for="m_cls">Class</label><select id="m_cls">' + classOptions(e.class, false) + '</select></div>' +
+    '<div class="field"><label for="m_st">Strain or variety</label><input type="text" id="m_st" value="' + esc(e.strain) + '"></div>' +
+    '<label class="check"><input type="checkbox" id="m_paid"' + (e.paid ? ' checked' : '') + '><span>Fee paid</span></label></div>' +
+    '<div class="btnrow"><button class="btn primary" id="m_save">Save changes</button><button class="btn secondary" data-action="close-modal">Cancel</button></div>',
+    m => { $('#m_save', m).onclick = async () => {
+      const name = $('#m_ex', m).value.trim(); if (!name) { toast('Exhibitor name is required'); return; }
+      await API.patchEntry(id, {exhibitor: name, club: $('#m_club', m).value.trim(), contact: $('#m_ct', m).value.trim(), class: $('#m_cls', m).value, strain: $('#m_st', m).value.trim(), paid: $('#m_paid', m).checked});
+      closeModal(); toast('Entry updated');
+    }; });
+}
+
+/* == Judging == */
+let classSig = '';
+TABS.judging = {
+  mount(){
+    view().innerHTML =
+      '<div class="card"><div class="judgebar">' +
+      '<div class="field" style="margin:0"><label for="' + (authMode ? 'jNameRO' : 'jName') + '">' + (authMode ? 'Judging as' : 'Your name') + '</label><input type="text" id="' + (authMode ? 'jNameRO' : 'jName') + '" autocomplete="name" value="' + esc(myName()) + '" placeholder="Judge name"' + (authMode ? ' readonly' : '') + '></div>' +
+      '<div class="field" style="margin:0"><label for="jClass">Class to judge</label><select id="jClass"></select></div></div>' +
+      '<p class="hint" style="margin-top:.7rem" id="jHint"></p><div class="progress" aria-hidden="true"><i id="jProg" style="width:0"></i></div></div>' +
+      '<div id="jList" style="margin-top:1rem"></div>';
+    classSig = '';
+  },
+  update(){
+    if (!$('#jClass')) return;
+    const withEntries = cfg().classes.filter(c => activeEntries().some(e => e.class === c.id));
+    const sig = withEntries.map(c => c.id + c.name).join('|');
+    if (sig !== classSig) {
+      classSig = sig;
+      if (!withEntries.some(c => c.id === S.judgeClass)) S.judgeClass = withEntries[0] ? withEntries[0].id : '';
+      $('#jClass').innerHTML = withEntries.length ? withEntries.map(c => '<option value="' + esc(c.id) + '"' + (c.id === S.judgeClass ? ' selected' : '') + '>' + esc(c.name) + '</option>').join('') : '<option value="">No classes have entries</option>';
+    }
+    const list = activeEntries().filter(e => e.class === S.judgeClass).sort(byNo);
+    const mine = list.filter(e => myScore(e.id) || e.dq).length;
+    $('#jHint').textContent = !myName() ? 'Enter your name first so your scores are recorded under it.' :
+      (list.length ? mine + ' of ' + list.length + ' entries done by you.' + (cfg().anonymous ? ' Exhibitor names are hidden while you judge.' : '') : 'Register entries in this class to start judging.');
+    $('#jProg').style.width = (list.length ? Math.round(mine / list.length * 100) : 0) + '%';
+    $('#jList').innerHTML = list.length ? '<div class="entrygrid">' + list.map(e => {
+      const ms = myScore(e.id);
+      const cls = e.dq ? 'dq' : ms ? 'done' : '';
+      const status = e.dq ? '<span class="chip bad">Disqualified</span>' : ms ? '<span class="chip ok">Your score ' + fmt(totalOf(ms)) + '/' + maxTotal() + '</span>' : '<span class="chip warn">Not scored</span>';
+      const line = cfg().anonymous ? (e.strain ? esc(e.strain) : '') : esc(e.strain || '') + (e.exhibitor ? ' by ' + esc(e.exhibitor) : '');
+      return '<button class="entrybtn" data-action="score" data-id="' + e.id + '"><span class="tag big ' + cls + '">' + e.no + '</span><span class="txt">' + status + (line ? '<span class="sub">' + line + '</span>' : '') + '</span></button>';
+    }).join('') + '</div>' : '<div class="card empty"><b>Nothing to judge yet</b>Entries appear here as soon as they are registered.</div>';
+  }
+};
+function openScore(id){
+  if (!myName()) { toast('Enter your name first'); const n = $('#jName'); if (n) n.focus(); return; }
+  const e = S.entries.find(x => x.id === id); if (!e) return;
+  const ms = myScore(id), pts = (ms && ms.points) || {};
+  const crits = cfg().criteria.map(c => {
+    const v = num(pts[c.id]);
+    return '<div class="crit"><label for="n_' + c.id + '">' + esc(c.name) + ' <span class="max">out of ' + c.max + '</span></label>' +
+      '<input type="range" id="r_' + c.id + '" data-crit="' + c.id + '" min="0" max="' + c.max + '" step="0.5" value="' + v + '" aria-label="' + esc(c.name) + ' slider">' +
+      '<input type="number" id="n_' + c.id + '" data-crit="' + c.id + '" min="0" max="' + c.max + '" step="0.5" inputmode="decimal" value="' + v + '"></div>';
+  }).join('');
+  openModal('<div class="modal-head"><span class="tag big">' + e.no + '</span><div><h2>' + esc(className(e.class)) + '</h2><div class="sub">' +
+    (cfg().anonymous ? esc(e.strain || 'Anonymous entry') : esc((e.strain || 'Entry') + (e.exhibitor ? ' by ' + e.exhibitor : ''))) + '</div></div></div>' +
+    '<div id="crits">' + crits + '</div>' +
+    '<div class="totalbar"><span>Total</span><span><strong id="tot">0</strong> / ' + maxTotal() + '</span></div>' +
+    '<div class="field"><label for="sNotes">Notes <span class="muted">(optional, only you and the results table see these)</span></label><textarea id="sNotes">' + esc(ms ? ms.notes : '') + '</textarea></div>' +
+    '<div class="dqbox"><label class="check"><input type="checkbox" id="sDq"' + (e.dq ? ' checked' : '') + '><span>Disqualify this entry</span></label>' +
+    '<input type="text" id="sDqWhy" placeholder="Reason, e.g. wrong class or diseased fish" value="' + esc(e.dqReason) + '" aria-label="Disqualification reason"></div>' +
+    '<div class="btnrow"><button class="btn primary" id="sSave">Save score</button><button class="btn accent" id="sNext">Save and next</button>' +
+    (ms ? '<button class="btn secondary" id="sClear">Remove my score</button>' : '') + '<button class="btn secondary" data-action="close-modal">Cancel</button></div>',
+    m => {
+      const recalc = () => { $('#tot', m).textContent = fmt(cfg().criteria.reduce((a, c) => a + num($('#n_' + c.id, m).value), 0)); };
+      recalc();
+      $('#crits', m).addEventListener('input', ev => {
+        const t = ev.target, cid = t.getAttribute('data-crit'); if (!cid) return;
+        const crit = cfg().criteria.find(c => c.id === cid);
+        let v = Math.min(crit.max, Math.max(0, num(t.value)));
+        if (t.type === 'range') $('#n_' + cid, m).value = v; else $('#r_' + cid, m).value = v;
+        recalc();
+      });
+      const save = async goNext => {
+        const points = {};
+        cfg().criteria.forEach(c => { points[c.id] = Math.min(c.max, Math.max(0, num($('#n_' + c.id, m).value))); });
+        const dq = $('#sDq', m).checked, why = $('#sDqWhy', m).value.trim();
+        try {
+          await API.putScore({entryId: id, judgeUid: myUid(), judge: myName(), points, notes: $('#sNotes', m).value.trim(), ts: Date.now()});
+          if (dq !== !!e.dq || (dq && why !== (e.dqReason || ''))) await API.patchEntry(id, {dq, dqReason: dq ? why : ''});
+        } catch(err) { toast('Could not save. Try again.'); return; }
+        closeModal();
+        if (goNext) {
+          const list = activeEntries().filter(x => x.class === e.class).sort(byNo);
+          const idx = list.findIndex(x => x.id === id);
+          const nxt = list.slice(idx + 1).concat(list.slice(0, idx)).find(x => !myScore(x.id) && !x.dq);
+          if (nxt) { openScore(nxt.id); return; }
+          toast('That was the last unscored entry in this class');
+        } else toast('Score saved');
+      };
+      $('#sSave', m).onclick = () => save(false);
+      $('#sNext', m).onclick = () => save(true);
+      const clr = $('#sClear', m);
+      if (clr) clr.onclick = async () => { await API.delScore(id, myUid()); closeModal(); toast('Your score was removed'); };
+    });
+}
+
+/* == Results == */
+TABS.results = {
+  mount(){
+    view().innerHTML =
+      '<div class="toolbar"><select id="rClass" aria-label="Class"><option value="">All classes</option>' + classOptions(S.resultClass, false) + '</select>' +
+      (cfg().anonymous ? '<button class="btn secondary" data-action="reveal" id="rReveal"></button>' : '') +
+      '<span style="flex:1"></span><button class="btn secondary" data-action="export-results">Export CSV</button></div>' +
+      '<div id="rBody"></div>';
+    const s = $('#rClass'); s.value = S.resultClass;
+  },
+  update(){
+    const body = $('#rBody'); if (!body) return;
+    const rv = $('#rReveal'); if (rv) rv.textContent = S.reveal ? 'Hide exhibitor names' : 'Reveal exhibitor names';
+    const hide = cfg().anonymous && !S.reveal;
+    const need = Math.max(1, num(cfg().judgesPerEntry, 1));
+    const classes = cfg().classes.filter(c => !S.resultClass || c.id === S.resultClass);
+    let html = '';
+    if (!S.resultClass) {
+      const winners = [];
+      cfg().classes.forEach(c => standings(c.id).scored.filter(r => r.place === 1).forEach(r => winners.push({r, c})));
+      winners.sort((a,b) => b.r.avg - a.r.avg);
+      if (winners.length) {
+        const labels = ['Best in show','Reserve','Third overall'];
+        html += '<h2 style="margin-bottom:.6rem">Best in show contenders</h2><div class="bis">' + winners.slice(0,3).map((w, i) =>
+          '<div class="card' + (i === 0 ? ' first' : '') + '"><span class="rosette p' + (i+1) + '">' + (i+1) + '</span><div><b>' + labels[i] + '</b><div><span class="tag" style="height:1.8rem;min-width:2.8rem;font-size:.95rem">' + w.r.e.no + '</span> <span class="score">' + fmt(w.r.avg) + '</span></div><div class="sub">' + esc(w.c.name) + '</div>' +
+          '<div class="sub' + (hide ? ' blur' : '') + '">' + esc(w.r.e.exhibitor) + '</div></div></div>').join('') + '</div>';
+      }
+    }
+    let any = false;
+    classes.forEach(c => {
+      const st = standings(c.id);
+      const total = st.scored.length + st.pending.length + st.dq.length;
+      if (!total) return;
+      any = true;
+      html += '<div class="classblock"><h3>' + esc(c.name) + '<span class="chip">' + st.scored.length + ' of ' + (st.scored.length + st.pending.length) + ' scored</span>' + (st.dq.length ? '<span class="chip bad">' + st.dq.length + ' disqualified</span>' : '') + '</h3>';
+      if (st.scored.length) {
+        html += '<div class="tablewrap"><table><thead><tr><th>Place</th><th>No.</th><th>Strain</th><th>Exhibitor</th><th class="num">Average</th><th>Judges</th></tr></thead><tbody>' +
+          st.scored.map(r => {
+            const rc = r.place <= 3 ? 'p' + r.place : 'pn';
+            const jd = r.sc.map(s => esc(s.judge) + ' ' + fmt(totalOf(s))).join(', ');
+            return '<tr><td><span class="rosette ' + rc + '" title="' + ordinal(r.place) + (r.tie ? ' (tie)' : '') + '">' + r.place + '</span>' + (r.tie ? ' <span class="chip warn">Tie</span>' : '') + '</td>' +
+              '<td><span class="tag">' + r.e.no + '</span></td><td>' + esc(r.e.strain || '') + '</td>' +
+              '<td class="' + (hide ? 'blur' : '') + '">' + esc(r.e.exhibitor) + '</td>' +
+              '<td class="num score">' + fmt(r.avg) + '</td>' +
+              '<td class="sub">' + jd + (r.n < need ? ' <span class="chip warn">Needs ' + (need - r.n) + ' more</span>' : '') + '</td></tr>';
+          }).join('') + '</tbody></table></div>';
+      } else html += '<p class="muted">No scores yet in this class.</p>';
+      if (st.pending.length) html += '<p class="hint" style="margin-top:.5rem">Not yet scored: ' + st.pending.sort((a,b) => byNo(a.e,b.e)).map(r => '#' + r.e.no).join(', ') + '</p>';
+      if (st.dq.length) html += '<p class="hint" style="margin-top:.3rem">Disqualified: ' + st.dq.sort(byNo).map(e => '#' + e.no + (e.dqReason ? ' (' + esc(e.dqReason) + ')' : '')).join(', ') + '</p>';
+      html += '</div>';
+    });
+    body.innerHTML = any ? html : '<div class="card empty"><b>No results yet</b>Results build up as judges save scores.</div>';
+  }
+};
+
+/* == Users (admin) == */
+const genPw = () => { const abc = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const b = new Uint32Array(10); crypto.getRandomValues(b); return Array.from(b).map(n => abc[n % abc.length]).join(''); };
+function authMsg(code){
+  return ({
+    'auth/invalid-credential': 'Email or password is not right.', 'auth/wrong-password': 'Email or password is not right.', 'auth/user-not-found': 'Email or password is not right.',
+    'auth/invalid-email': 'That email address does not look right.', 'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
+    'auth/email-already-in-use': 'That email already has a sign-in. Use a different email, or ask that person to use Forgot password.',
+    'auth/weak-password': 'Use a password with at least 6 characters.', 'auth/network-request-failed': 'No internet connection.',
+    'auth/operation-not-allowed': 'Email and password sign-in is not switched on in Firebase yet.'
+  })[code] || 'Something went wrong. Try again.';
+}
+TABS.users = {
+  mount(){
+    if (!authMode) { view().innerHTML = '<div class="card"><h2>Accounts need Firebase</h2><p class="muted" style="margin-top:.4rem">This copy is not connected to Firebase, so there are no sign-ins. Follow the setup guide to turn on accounts.</p></div>'; return; }
+    view().innerHTML = '<div class="grid2"><div><section class="card"><div class="card-head"><h2>People</h2></div>' +
+      '<div class="tablewrap"><table><thead><tr><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead><tbody id="uBody"></tbody></table></div>' +
+      '<p class="hint" style="margin-top:.7rem">Admins do everything. Registrars register exhibitors and manage entries. Judges only see anonymous entries and their own scores.</p></section></div>' +
+      '<aside><section class="card"><h3 style="margin-bottom:.8rem">Add a person</h3>' +
+      '<div class="field"><label for="uName">Full name</label><input type="text" id="uName" autocomplete="off"></div>' +
+      '<div class="field"><label for="uEmail">Email</label><input type="email" id="uEmail" autocomplete="off"></div>' +
+      '<div class="field"><label for="uRole">Role</label><select id="uRole"><option value="judge">Judge</option><option value="registrar">Registrar</option><option value="admin">Admin</option></select></div>' +
+      '<div class="field"><label for="uPw">Temporary password</label><div style="display:flex;gap:.4rem"><input type="text" id="uPw" autocomplete="off" value="' + esc(genPw()) + '"><button class="btn secondary" type="button" data-action="user-gen-pw">New</button></div><span class="hint">At least 6 characters. You hand this to them once.</span></div>' +
+      '<button class="btn primary" id="uGo" data-action="user-add">Create account</button></section></aside></div>';
+  },
+  update(){
+    const body = $('#uBody'); if (!body) return;
+    const users = S.users.slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    body.innerHTML = users.length ? users.map(u => {
+      const self = S.me && u.id === S.me.uid;
+      return '<tr class="' + (u.disabled ? 'dim' : '') + '"><td><b>' + esc(u.name || 'Unnamed') + '</b>' + (self ? ' <span class="chip info">You</span>' : '') + '<div class="sub">' + esc(u.email) + '</div></td>' +
+        '<td><select class="u-role" data-uid="' + esc(u.id) + '" aria-label="Role for ' + esc(u.name) + '"' + (self ? ' disabled' : '') + ' style="min-width:8.5rem">' +
+        ['judge','registrar','admin'].map(r => '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>' + ROLE_LABEL[r] + '</option>').join('') + '</select></td>' +
+        '<td>' + (u.disabled ? '<span class="chip bad">Switched off</span>' : '<span class="chip ok">Active</span>') + '</td>' +
+        '<td><div class="actions"><button class="btn secondary sm" data-action="user-reset" data-email="' + esc(u.email) + '">Reset password</button>' +
+        (self ? '' : '<button class="btn secondary sm" data-action="user-toggle" data-uid="' + esc(u.id) + '">' + (u.disabled ? 'Switch on' : 'Switch off') + '</button><button class="btn secondary sm danger-text" data-action="user-remove" data-uid="' + esc(u.id) + '">Remove</button>') +
+        '</div></td></tr>';
+    }).join('') : '<tr><td colspan="4"><div class="empty"><b>No people yet</b>Add your judges and registrars with the form.</div></td></tr>';
+  }
+};
+async function createUser(){
+  const name = $('#uName').value.trim(), email = $('#uEmail').value.trim(), role = $('#uRole').value, pw = $('#uPw').value;
+  if (!name) { toast('Enter their name'); $('#uName').focus(); return; }
+  if (!/^\S+@\S+\.\S+$/.test(email)) { toast('Enter a valid email'); $('#uEmail').focus(); return; }
+  if (pw.length < 6) { toast('Password needs at least 6 characters'); return; }
+  const btn = $('#uGo'); btn.disabled = true; btn.textContent = 'Creating…';
+  let uid = null;
+  try {
+    // A second app instance creates the login, so the admin stays signed in here.
+    const helper = getApps().find(a => a.name === 'account-helper') || fbInit(FIREBASE_CONFIG, 'account-helper');
+    const a2 = getAuth(helper);
+    const cred = await createUserWithEmailAndPassword(a2, email, pw);
+    uid = cred.user.uid;
+    await signOut(a2);
+    await API.putUser(uid, {name, email, role, disabled: false, createdAt: Date.now()});
+    openModal('<h2>' + esc(name) + ' can now sign in</h2><p class="muted" style="margin:.4rem 0 .8rem">Give them these details. They can set their own password with Forgot password on the sign-in page.</p>' +
+      '<pre>Email: ' + esc(email) + '\nPassword: ' + esc(pw) + '\nRole: ' + ROLE_LABEL[role] + '</pre><div class="btnrow"><button class="btn primary" data-action="close-modal">Done</button></div>');
+    $('#uName').value = ''; $('#uEmail').value = ''; $('#uPw').value = genPw();
+  } catch(e) {
+    toast(uid ? 'Sign-in created but access was not saved. Check the Firestore rules.' : authMsg(e && e.code));
+  }
+  btn.disabled = false; btn.textContent = 'Create account';
+}
+
+/* == Setup == */
+function newDraft(){ return JSON.parse(JSON.stringify(cfg())); }
+function readSetup(){
+  const d = setupDraft || newDraft();
+  d.name = $('#s_name').value.trim(); d.date = $('#s_date').value; d.venue = $('#s_venue').value.trim();
+  d.fee = num($('#s_fee').value); d.currency = $('#s_cur').value.trim();
+  d.open = $('#s_open').checked; d.anonymous = $('#s_anon').checked;
+  d.maxPerClass = Math.max(0, Math.round(num($('#s_max').value))); d.judgesPerEntry = Math.max(1, Math.round(num($('#s_jpe').value, 1)));
+  d.classes = $$('.cls-row').map(r => ({id: r.dataset.id, name: $('input', r).value.trim()}));
+  d.criteria = $$('.crit-row').map(r => ({id: r.dataset.id, name: $('.cr-name', r).value.trim(), max: num($('.cr-max', r).value)}));
+  setupDraft = d; return d;
+}
+TABS.setup = {
+  mount(){
+    const d = setupDraft || newDraft(); setupDraft = d;
+    const tot = d.criteria.reduce((a, c) => a + num(c.max), 0);
+    view().innerHTML =
+    '<div class="grid2"><div>' +
+    '<section class="card"><h2 style="margin-bottom:.9rem">Show details</h2>' +
+      '<div class="field"><label for="s_name">Show name</label><input type="text" id="s_name" value="' + esc(d.name) + '"></div>' +
+      '<div class="two"><div class="field"><label for="s_date">Date</label><input type="date" id="s_date" value="' + esc(d.date) + '"></div>' +
+      '<div class="field"><label for="s_venue">Venue</label><input type="text" id="s_venue" value="' + esc(d.venue) + '"></div></div>' +
+      '<div class="two"><div class="field"><label for="s_fee">Fee per entry</label><input type="number" id="s_fee" min="0" step="any" inputmode="decimal" value="' + esc(d.fee) + '"></div>' +
+      '<div class="field"><label for="s_cur">Currency symbol</label><input type="text" id="s_cur" maxlength="4" value="' + esc(d.currency) + '"></div></div>' +
+      '<div class="two"><div class="field"><label for="s_max">Max entries per exhibitor per class</label><input type="number" id="s_max" min="0" step="1" value="' + esc(d.maxPerClass) + '"><span class="hint">0 means no limit.</span></div>' +
+      '<div class="field"><label for="s_jpe">Judges per entry</label><input type="number" id="s_jpe" min="1" step="1" value="' + esc(d.judgesPerEntry) + '"><span class="hint">Results flag entries with fewer scores.</span></div></div>' +
+      '<label class="check"><input type="checkbox" id="s_open"' + (d.open ? ' checked' : '') + '><span>Registration is open</span></label>' +
+      '<label class="check"><input type="checkbox" id="s_anon"' + (d.anonymous ? ' checked' : '') + '><span>Hide exhibitor names from judges and results until revealed</span></label></section>' +
+    '<section class="card"><h2 style="margin-bottom:.3rem">Classes</h2><p class="hint" style="margin-bottom:.8rem">Benches are judged class by class. Rename, reorder or add classes.</p>' +
+      d.classes.map((c, i) => '<div class="listrow cls-row" data-id="' + esc(c.id) + '"><input type="text" value="' + esc(c.name) + '" aria-label="Class name"><div class="btns">' +
+        '<button class="btn secondary sm" data-action="cls-up" data-i="' + i + '" aria-label="Move up">Up</button><button class="btn secondary sm" data-action="cls-down" data-i="' + i + '" aria-label="Move down">Down</button>' +
+        '<button class="btn secondary sm danger-text" data-action="cls-rm" data-i="' + i + '">Remove</button></div></div>').join('') +
+      '<button class="btn secondary sm" data-action="add-class">Add class</button></section>' +
+    '<section class="card"><h2 style="margin-bottom:.3rem">Scoring criteria</h2><p class="hint" style="margin-bottom:.8rem">Judges score each criterion up to its maximum. Current total: <b id="critTotal">' + fmt(tot) + '</b> points.</p>' +
+      d.criteria.map((c, i) => '<div class="critrow crit-row" data-id="' + esc(c.id) + '"><input type="text" class="cr-name" value="' + esc(c.name) + '" aria-label="Criterion name"><input type="number" class="cr-max" min="1" step="any" value="' + esc(c.max) + '" aria-label="Maximum points"><button class="btn secondary sm danger-text" data-action="crit-rm" data-i="' + i + '">Remove</button></div>').join('') +
+      '<button class="btn secondary sm" data-action="add-crit">Add criterion</button></section>' +
+    '<div style="margin-top:1rem"><button class="btn primary" data-action="save-setup">Save settings</button></div>' +
+    '</div><aside>' +
+    '<section class="card"><h3 style="margin-bottom:.5rem">Try it out</h3><p class="hint" style="margin-bottom:.8rem">Add a dozen made-up entries to practise registering and judging. You can wipe them afterwards.</p><button class="btn secondary" data-action="sample-data">Add sample entries</button></section>' +
+    '<section class="card danger-zone"><h3 style="margin-bottom:.5rem">Clear the show</h3><p class="hint" style="margin-bottom:.8rem">Deletes every entry and score and restarts bench numbers at 1. Settings stay.</p><button class="btn danger" data-action="reset-data">Delete all entries and scores</button></section>' +
+    '</aside></div>';
+  },
+  update(){ /* setup keeps its own draft; never overwritten by live data */ }
+};
+async function saveSetup(){
+  const d = readSetup();
+  if (!d.name) { toast('Give the show a name'); return; }
+  if (d.classes.some(c => !c.name)) { toast('Every class needs a name'); return; }
+  if (d.criteria.some(c => !c.name || !(c.max > 0))) { toast('Every criterion needs a name and a maximum above 0'); return; }
+  if (!d.classes.length || !d.criteria.length) { toast('Keep at least one class and one criterion'); return; }
+  try { await API.saveConfig(d); setupDirty = false; setupDraft = null; toast('Settings saved'); renderHeader(); TABS.setup.mount(); }
+  catch(e){ toast('Could not save settings. Try again.'); }
+}
+async function addSamples(){
+  const strains = ['Red Mosaic','Blue Neon','Full Gold','Snakeskin Green','Half Black Emerald','Tuxedo','Cobra','Grass Yellow','Metal Blue','Albino Purple','Koi Galaxy','Dumbo Ear'];
+  const people = ['Marco Reyes','Lian Cruz','Ana Santos','Ben Ocampo'];
+  const classes = cfg().classes;
+  try {
+    const start = await API.alloc(12);
+    for (let i = 0; i < 12; i++) {
+      await API.putEntry({id: 'e' + uid(), no: start + i, exhibitor: people[i % people.length], club: 'Sample club', contact: '', class: classes[i % classes.length].id, strain: strains[i], paid: i % 3 !== 0, status: 'active', dq: false, dqReason: '', ts: Date.now() + i, sample: true});
+    }
+    toast('Added 12 sample entries');
+  } catch(e){ toast('Could not add samples'); }
+}
+
+/* ---------- exports ---------- */
+function exportEntries(){
+  const rows = [['No','Class','Strain','Exhibitor','Club','Contact','Paid','Status','Disqualified reason']];
+  S.entries.slice().sort(byNo).forEach(e => rows.push([e.no, className(e.class), e.strain, e.exhibitor, e.club, e.contact, e.paid ? 'Yes' : 'No', e.status === 'scratched' ? 'Scratched' : e.dq ? 'Disqualified' : 'Entered', e.dqReason]));
+  exportFile('entries.csv', toCsv(rows));
+}
+function exportResults(){
+  const rows = [['Class','Place','No','Strain','Exhibitor','Average','Scores','Judges']];
+  cfg().classes.forEach(c => {
+    standings(c.id).scored.forEach(r => rows.push([c.name, r.place, r.e.no, r.e.strain, r.e.exhibitor, fmt(r.avg), r.n, r.sc.map(s => s.judge + ': ' + fmt(totalOf(s))).join('; ')]));
+  });
+  exportFile('results.csv', toCsv(rows));
+}
+
+/* ---------- events ---------- */
+const ACTIONS = {
+  'account': () => openAccount(),
+  'login': async el => {
+    const email = $('#lEmail').value.trim(), pw = $('#lPw').value;
+    if (!email || !pw) { toast('Enter your email and password'); return; }
+    el.disabled = true;
+    try { await signInWithEmailAndPassword(auth, email, pw); }
+    catch(e) { toast(authMsg(e && e.code)); el.disabled = false; }
+  },
+  'forgot': async () => {
+    const email = $('#lEmail').value.trim();
+    if (!email) { toast('Type your email above first'); $('#lEmail').focus(); return; }
+    try { await sendPasswordResetEmail(auth, email); } catch(e) { if (e && e.code === 'auth/invalid-email') { toast(authMsg(e.code)); return; } }
+    toast('If that email has an account, a reset link is on its way');
+  },
+  'logout': async () => { closeModal(); try { await signOut(auth); } catch(e){} },
+  'reset-mine': async () => { try { await sendPasswordResetEmail(auth, S.me.email); toast('Reset link sent to ' + S.me.email); } catch(e){ toast(authMsg(e && e.code)); } },
+  'user-add': () => createUser(),
+  'user-gen-pw': () => { $('#uPw').value = genPw(); },
+  'user-reset': async el => { try { await sendPasswordResetEmail(auth, el.dataset.email); toast('Reset link sent to ' + el.dataset.email); } catch(e){ toast(authMsg(e && e.code)); } },
+  'user-toggle': async el => { const u = S.users.find(x => x.id === el.dataset.uid); if (u) { await API.patchUser(u.id, {disabled: !u.disabled}); toast(u.disabled ? u.name + ' can sign in again' : u.name + ' is switched off'); } },
+  'user-remove': async el => {
+    const u = S.users.find(x => x.id === el.dataset.uid); if (!u) return;
+    if (await confirmModal({title: 'Remove ' + (u.name || u.email) + '?', body: 'They lose all access to the show. Their scores stay. To let them back in later, add them again with a different email, or switch them off instead.', confirm: 'Remove person', danger: true})) { await API.delUser(u.id); toast('Removed'); }
+  },
+  'tab': el => switchTab(el.dataset.tab),
+  'overlay': (el, ev) => { if (ev.target === el) closeModal(); },
+  'close-modal': () => closeModal(),
+  'add-row': () => { $('#rows').insertAdjacentHTML('beforeend', rowHtml()); TABS.register.updateFee(); },
+  'rm-row': el => { if ($$('.row-entry').length > 1) { el.closest('.row-entry').remove(); TABS.register.updateFee(); } else toast('Keep at least one entry'); },
+  'register': () => doRegister(),
+  'reg-again': () => { S.regDone = null; TABS.register.mount(); TABS.register.update(); },
+  'toggle-paid': async el => { const e = S.entries.find(x => x.id === el.dataset.id); if (e) await API.patchEntry(e.id, {paid: !e.paid}); },
+  'edit-entry': el => editEntry(el.dataset.id),
+  'scratch': async el => { const e = S.entries.find(x => x.id === el.dataset.id); if (e) { await API.patchEntry(e.id, {status: e.status === 'scratched' ? 'active' : 'scratched'}); toast(e.status === 'scratched' ? 'Entry ' + e.no + ' restored' : 'Entry ' + e.no + ' scratched'); } },
+  'del-entry': async el => {
+    const e = S.entries.find(x => x.id === el.dataset.id); if (!e) return;
+    if (await confirmModal({title: 'Delete entry ' + e.no + '?', body: 'This removes the entry and any scores for it. Use Scratch instead if the fish simply did not show up.', confirm: 'Delete entry', danger: true})) { await API.delEntry(e.id); toast('Entry deleted'); }
+  },
+  'export-entries': () => exportEntries(),
+  'export-results': () => exportResults(),
+  'score': el => openScore(el.dataset.id),
+  'reveal': () => { S.reveal = !S.reveal; TABS.results.update(); },
+  'add-class': () => { readSetup(); setupDraft.classes.push({id: 'c' + uid(), name: ''}); setupDirty = true; TABS.setup.mount(); const r = $$('.cls-row'); $('input', r[r.length-1]).focus(); },
+  'cls-rm': el => {
+    readSetup(); const c = setupDraft.classes[+el.dataset.i];
+    if (S.entries.some(e => e.class === c.id)) { toast('This class has entries. Move or delete them first.'); return; }
+    if (setupDraft.classes.length <= 1) { toast('Keep at least one class'); return; }
+    setupDraft.classes.splice(+el.dataset.i, 1); setupDirty = true; TABS.setup.mount();
+  },
+  'cls-up': el => { readSetup(); const i = +el.dataset.i, a = setupDraft.classes; if (i > 0) { [a[i-1], a[i]] = [a[i], a[i-1]]; setupDirty = true; TABS.setup.mount(); } },
+  'cls-down': el => { readSetup(); const i = +el.dataset.i, a = setupDraft.classes; if (i < a.length - 1) { [a[i+1], a[i]] = [a[i], a[i+1]]; setupDirty = true; TABS.setup.mount(); } },
+  'add-crit': () => { readSetup(); setupDraft.criteria.push({id: 'k' + uid(), name: '', max: 10}); setupDirty = true; TABS.setup.mount(); const r = $$('.crit-row'); $('.cr-name', r[r.length-1]).focus(); },
+  'crit-rm': el => { readSetup(); if (setupDraft.criteria.length <= 1) { toast('Keep at least one criterion'); return; } setupDraft.criteria.splice(+el.dataset.i, 1); setupDirty = true; TABS.setup.mount(); },
+  'save-setup': () => saveSetup(),
+  'sample-data': () => addSamples(),
+  'reset-data': async () => {
+    if (await confirmModal({title: 'Delete all entries and scores?', body: 'Every entry and every judge score will be removed for everyone using this show. This cannot be undone.', confirm: 'Delete everything', danger: true, type: 'RESET'})) {
+      try { await API.resetAll(); toast('Show cleared'); } catch(e){ toast('Could not clear the show'); }
+    }
+  }
+};
+document.addEventListener('click', ev => {
+  const el = ev.target.closest('[data-action]'); if (!el) return;
+  const fn = ACTIONS[el.dataset.action]; if (fn) { if (el.tagName === 'A') ev.preventDefault(); fn(el, ev); }
+});
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && $('#modalRoot').firstChild) closeModal(); });
+document.addEventListener('input', ev => {
+  const t = ev.target;
+  if (t.id === 'jName') { S.judge = t.value; ls.set('gs:judge', t.value); TABS.judging.update(); }
+  else if (t.id === 'eSearch') TABS.entries.update();
+  else if (t.id === 'exName') {
+    const m = S.entries.find(e => (e.exhibitor || '').toLowerCase() === t.value.trim().toLowerCase());
+    if (m) { if (!$('#exClub').value) $('#exClub').value = m.club || ''; if (!$('#exContact').value) $('#exContact').value = m.contact || ''; }
+  }
+  else if (t.closest && t.closest('#view') && S.tab === 'setup') {
+    setupDirty = true;
+    if (t.classList.contains('cr-max')) $('#critTotal').textContent = fmt($$('.cr-max').reduce((a, i) => a + num(i.value), 0));
+  }
+});
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.classList && t.classList.contains('u-role')) { API.patchUser(t.dataset.uid, {role: t.value}).then(() => toast('Role updated')); }
+  else if (t.id === 'eClass' || t.id === 'eFilter') TABS.entries.update();
+  else if (t.id === 'jClass') { S.judgeClass = t.value; TABS.judging.update(); }
+  else if (t.id === 'rClass') { S.resultClass = t.value; TABS.results.update(); }
+});
+
+/* ---------- navigation and refresh ---------- */
+function switchTab(t){
+  const ok = allowedTabs(); if (!ok.length) { renderHeader(); return; }
+  if (!ok.includes(t)) t = ok[0];
+  S.tab = t; renderHeader();
+  if (!S.ready) return;
+  TABS[t].mount(); TABS[t].update();
+  window.scrollTo(0, 0);
+}
+function onData(){
+  renderHeader();
+  if (!S.ready) return;
+  const t = TABS[S.tab]; if (!t) return;
+  // rebuild option lists when class names change
+  if (S.tab === 'register' && !$('#rows')) { if (!S.regDone) { t.mount(); } }
+  t.update();
+}
+let lastClassSig = '';
+function afterConfig(){
+  const sig = JSON.stringify(cfg().classes) + cfg().open + cfg().anonymous;
+  if (sig !== lastClassSig) {
+    lastClassSig = sig;
+    if (S.ready && (S.tab === 'entries' || S.tab === 'results' || (S.tab === 'register' && !S.regDone && !$$('.r-class').some(s => s.value) && !($('#exName') && $('#exName').value)))) { TABS[S.tab].mount(); }
+  }
+}
+
+/* ---------- accounts, login and start ---------- */
+let auth = null, fbStore = null, unsubs = [], dataUnsubs = [];
+function stopData(){ dataUnsubs.forEach(u => { try { u(); } catch(e){} }); dataUnsubs = []; S.ready = false; S.pub = []; S.priv = {}; S.entries = []; S.scores = []; S.users = []; }
+function teardown(){ stopData(); unsubs.forEach(u => { try { u(); } catch(e){} }); unsubs = []; S.me = null; S.fatal = false; S.sync = 'connecting'; }
+function showFatal(title, body){ S.fatal = true; view().innerHTML = '<div class="card" style="max-width:640px;margin:1.5rem auto"><h2>' + esc(title) + '</h2><p style="margin-top:.6rem">' + body + '</p></div>'; }
+function showLogin(){
+  view().innerHTML = '<div class="card" style="max-width:440px;margin:1.5rem auto"><h2>Sign in</h2>' +
+    '<p class="muted" style="margin:.4rem 0 1rem">Use the email and password your show admin gave you.</p>' +
+    '<div class="field"><label for="lEmail">Email</label><input type="email" id="lEmail" autocomplete="username" autocapitalize="off"></div>' +
+    '<div class="field"><label for="lPw">Password</label><input type="password" id="lPw" autocomplete="current-password"></div>' +
+    '<div class="btnrow" style="margin-top:0"><button class="btn primary" data-action="login">Sign in</button><button class="btn ghost" data-action="forgot">Forgot password</button></div></div>';
+}
+function showNoAccess(title, body){
+  view().innerHTML = '<div class="card" style="max-width:520px;margin:1.5rem auto"><h2>' + esc(title) + '</h2><p class="muted" style="margin:.5rem 0 1rem">' + esc(body) + '</p><button class="btn secondary" data-action="logout">Sign out</button></div>';
+}
+function openAccount(){
+  if (!S.me) {
+    openModal('<h2>' + (authMode ? 'Not signed in' : 'Saved on this device only') + '</h2><p class="muted" style="margin-top:.5rem">' +
+      (authMode ? 'Sign in to use the show desk.' : 'This copy has no Firebase config yet, so nothing is shared and there are no accounts. Add your config to the file and upload it again.') +
+      '</p><div class="btnrow"><button class="btn primary" data-action="close-modal">Close</button></div>');
+    return;
+  }
+  openModal('<h2>' + esc(S.me.name || 'Your account') + '</h2><p class="muted" style="margin:.3rem 0 1rem">' + esc(S.me.email) + '<br>Role: <b>' + ROLE_LABEL[S.me.role] + '</b></p>' +
+    '<div class="btnrow"><button class="btn secondary" data-action="reset-mine">Email me a password reset link</button><button class="btn primary" data-action="logout">Sign out</button><button class="btn secondary" data-action="close-modal">Close</button></div>');
+}
+function startLocal(){
+  loadLocal(); pullLocal(); S.mode = 'local'; S.sync = 'local'; S.ready = true;
+  lastClassSig = JSON.stringify(cfg().classes) + cfg().open + cfg().anonymous;
+  switchTab(S.tab);
+}
+const fail = e => {
+  S.sync = 'err'; renderHeader();
+  if (e && e.code === 'permission-denied') showFatal('Firestore is blocking access', 'The database rules are missing or out of date. In Firebase, open Firestore Database, then Rules, paste the rules from the setup guide and press Publish. Then reload this page.');
+  else if (!S.ready && e) showFatal('Could not reach the database', 'Check your internet connection and that Firestore is created in your Firebase project, then reload. Details: ' + esc(e.message || e.code || 'unknown error'));
+};
+function rebuildEntries(){ S.entries = S.pub.map(e => Object.assign({exhibitor: '', club: '', contact: '', paid: false}, e, S.priv[e.id] || {})); }
+function startData(){
+  stopData();
+  const role = S.me.role, uid = S.me.uid;
+  const need = {config: false, entries: false};
+  if (role !== 'judge') need.priv = false;
+  if (role === 'admin' || role === 'judge') need.scores = false;
+  if (role === 'admin') need.users = false;
+  const check = () => {
+    if (!S.ready && !S.fatal && Object.values(need).every(Boolean)) {
+      S.ready = true; lastClassSig = JSON.stringify(cfg().classes) + cfg().open + cfg().anonymous;
+      S.tab = allowedTabs().includes(S.tab) ? S.tab : allowedTabs()[0]; switchTab(S.tab);
+    }
+  };
+  const after = k => { if (k in need) need[k] = true; if (S.ready) onData(); else check(); };
+  dataUnsubs.push(db.doc('config/show').onSnapshot(d => { S.config = d.exists ? mergeCfg(d.data()) : DEFAULT_CONFIG(); if (S.ready) afterConfig(); after('config'); }, fail));
+  dataUnsubs.push(db.collection('entries').onSnapshot(q => { S.pub = q.docs.map(d => Object.assign({}, d.data(), {id: d.id})); rebuildEntries(); after('entries'); }, fail));
+  if (need.priv !== undefined) dataUnsubs.push(db.collection('private').onSnapshot(q => { S.priv = {}; q.docs.forEach(d => { S.priv[d.id] = d.data(); }); rebuildEntries(); after('priv'); }, fail));
+  if (need.scores !== undefined) {
+    const col = role === 'admin' ? db.collection('scores') : db.collection('scores').where('judgeUid', '==', uid);
+    dataUnsubs.push(col.onSnapshot(q => { S.scores = q.docs.map(d => d.data()); after('scores'); }, fail));
+  }
+  if (need.users !== undefined) dataUnsubs.push(db.collection('users').onSnapshot(q => { S.users = q.docs.map(d => Object.assign({}, d.data(), {id: d.id})); after('users'); }, fail));
+  setTimeout(() => { if (!S.ready && !S.fatal) { Object.keys(need).forEach(k => { need[k] = true; }); check(); } }, 8000);
+}
+function watchProfile(user){
+  unsubs.push(db.doc('users/' + user.uid).onSnapshot(d => {
+    if (!d.exists) { stopData(); S.me = null; renderHeader(); showNoAccess('No access yet', 'Your sign-in works, but the admin has not given you a role. Ask them to add you in the Users tab.'); return; }
+    const p = d.data();
+    if (p.disabled || !ROLE_LABEL[p.role]) { stopData(); S.me = null; renderHeader(); showNoAccess('Account switched off', 'The admin has switched off this account. Ask them if you need access.'); return; }
+    const roleChanged = !S.me || S.me.role !== p.role || !dataUnsubs.length;
+    S.me = {uid: user.uid, email: user.email || p.email || '', name: p.name || user.email || '', role: p.role};
+    S.sync = 'live'; renderHeader();
+    if (roleChanged) startData();
+  }, fail));
+}
+function init(){
+  renderHeader();
+  if (!FIREBASE_READY) { startLocal(); return; }
+  let store;
+  try { const app = fbInit(FIREBASE_CONFIG); auth = getAuth(app); store = getFirestore(app); }
+  catch(e) { showFatal('Could not start Firebase', 'Check that the config pasted into the file is complete and copied exactly.'); return; }
+  db = makeDb(store);
+  onAuthStateChanged(auth, user => {
+    teardown(); renderHeader();
+    if (!user) { showLogin(); return; }
+    watchProfile(user);
+  });
+}
+init();
+})();
+</script>
+</body>
+</html>
